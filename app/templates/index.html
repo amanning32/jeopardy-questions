@@ -5,4 +5,12 @@
   <h1>Jeopardy</h1>
   <p class="lead">Thing that lets you look up Jeopardy stuff</p>
 </div>
+<table border = 1>
+    {% for question, answer in result.items(): %}
+        <tr>
+            <th> {{ question }} </th>
+            <td> {{ answer }} </td>
+        </tr>
+    {% endfor %}
+</table>
 {% endblock %}
