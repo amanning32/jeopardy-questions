@@ -5,7 +5,66 @@
   <h1>Jeopardy</h1>
   <p class="lead">Thing that lets you look up Jeopardy stuff</p>
 </div>
-<table border = 1>
+
+<!-- handle error -->
+
+<form action="/" method="POST">
+
+    <label for="date">Date Range</label>
+    <div class="input-group mb-3">
+        <input type="date" class="form-control" name="min_date"/>
+        <input type="date" class="form-control" name="max_date"/>
+    </div>
+
+    <label for="category">Category</label>
+    <div class="input-group mb-3">
+        <input type="text" name="Category" />
+    </div>
+
+    <label>Difficulty</label>
+
+    <div class="input-group mb-3">
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="diff1" value="easy">
+            <label class="form-check-label" for="diff1">Easy</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="diff2" value="moderate">
+            <label class="form-check-label" for="diff2">Moderate</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="diff3" value="hard">
+            <label class="form-check-label" for="diff3">Hard</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" name="diff4" value="veryhard">
+            <label class="form-check-label" for="diff4">Very Hard</label>
+        </div>
+    </div>
+
+    <input type="submit" class="btn btn-primary mb-3" value="Submit">
+</form>
+
+<table class="table">
+    <tr>
+        <th> Question </th>
+        <td> {{ result['question'] }} </td>
+    </tr>
+    <tr>
+        <th> Answer </th>
+        <td> {{ result['answer'] }} </td>
+    </tr>
+    <tr>
+        <th> Category </th>
+        <td> {{ result['category']['title'].upper() }} </td>
+    </tr>
+    <tr>
+        <th> Airdate </th>
+        <td> {{ result['airdate'][:10] }} </td>
+    </tr>
+</table>
+
+<table class="table">
     {% for question, answer in result.items(): %}
         <tr>
             <th> {{ question }} </th>

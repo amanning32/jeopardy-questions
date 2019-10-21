@@ -1,17 +1,37 @@
-from flask import render_template
+from flask import render_template, request
 import requests
 import json
 
 from app import app
 
-@app.route('/')
+@app.route('/', methods=["GET","POST"])
 def index():
-    question = requests.get('http://jservice.io/api/random')
-    questionData = json.loads(question.text)[0]
-    while (questionData["invalid_count"] == 1):
+    if request.method == "POST":
+        question = requests.get('http://jservice.io/api/clues?min_date='
+            + request.form['min_date'] + "&max_date=" + request.form['max_date'])
+
+        questionData = json.loads(question.text)[0]
+
+        print(len(json.loads(question.text)))
+
+        while (questionData["invalid_count"] != None):
+            question = requests.get('http://jservice.io/api/clues?value=100')
+            questionData = json.loads(question.text)[0]
+
+        return render_template("index.html", result = questionData)
+    else:
         question = requests.get('http://jservice.io/api/random')
         questionData = json.loads(question.text)[0]
-    return render_template("index.html", result = questionData)
+
+        # http://jservice.io/api/categories?offset=18400&count=100 is bound for categories
+
+        # max_date < 2015-03-31; min_date > 1984-09-10
+
+        while (questionData["invalid_count"] != None):
+            question = requests.get('http://jservice.io/api/random')
+            questionData = json.loads(question.text)[0]
+
+        return render_template("index.html", result = questionData) # add error = error
 
 @app.route('/about')
 def about():
