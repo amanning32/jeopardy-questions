@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <!-- Custom styles for this template -->
     <link href="https://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css" rel="stylesheet">
+    {% block script %}{% endblock %}
   </head>
   <body>
     <div class="container">
@@ -29,7 +30,7 @@
         </nav>
       </div>
       {% block body %}
-      {% endblock %}
+      {% endblock body %}
       <footer class="footer">
         <p>2019 Alexander Manning</p>
       </footer>

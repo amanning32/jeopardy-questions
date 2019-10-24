@@ -7,18 +7,28 @@ from app import app
 @app.route('/', methods=["GET","POST"])
 def index():
     if request.method == "POST":
+
         question = requests.get('http://jservice.io/api/clues?min_date='
             + request.form['min_date'] + "&max_date=" + request.form['max_date'])
 
-        questionData = json.loads(question.text)[0]
-
-        print(len(json.loads(question.text)))
-
-        while (questionData["invalid_count"] != None):
-            question = requests.get('http://jservice.io/api/clues?value=100')
+        if (len(json.loads(question.text)) == 0):
+            question = requests.get('http://jservice.io/api/random')
+            questionData = json.loads(question.text)[0]
+            while (questionData["invalid_count"] != None):
+                question = requests.get('http://jservice.io/api/random')
+                questionData = json.loads(question.text)[0]
+            errorMsg = "No clues match those details. Please try again. A random clue has been provided instead."
+            return render_template("index.html", result = questionData, error = errorMsg)
+        else:
             questionData = json.loads(question.text)[0]
 
-        return render_template("index.html", result = questionData)
+            print(len(json.loads(question.text)))
+
+            while (questionData["invalid_count"] != None):
+                question = requests.get('http://jservice.io/api/clues?value=100')
+                questionData = json.loads(question.text)[0]
+
+            return render_template("index.html", result = questionData, error = "")
     else:
         question = requests.get('http://jservice.io/api/random')
         questionData = json.loads(question.text)[0]
@@ -31,7 +41,7 @@ def index():
             question = requests.get('http://jservice.io/api/random')
             questionData = json.loads(question.text)[0]
 
-        return render_template("index.html", result = questionData) # add error = error
+        return render_template("index.html", result = questionData, error = "") # add error = error
 
 @app.route('/about')
 def about():
