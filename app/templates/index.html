@@ -55,30 +55,25 @@
 </form>
 
 <table class="table">
-    <tr>
-        <th> Question </th>
-        <td> {{ result['question'] }} </td>
-    </tr>
-    <tr>
-        <th> Answer </th>
-        <td> {{ result['answer'] }} </td>
-    </tr>
-    <tr>
-        <th> Category </th>
-        <td> {{ result['category']['title'].upper() }} </td>
-    </tr>
-    <tr>
-        <th> Airdate </th>
-        <td> {{ result['airdate'][:10] }} </td>
-    </tr>
-</table>
-
-<table class="table">
-    {% for question, answer in result.items(): %}
+    <thead>
         <tr>
-            <th> {{ question }} </th>
-            <td> {{ answer }} </td>
+            <th scope="col">Question</th>
+            <th scope="col">Answer</th>
+            <th scope="col">Category</th>
+            <th scope="col">Value</th>
+            <th scope="col">Airdate</th>
         </tr>
+    </thead>
+    {% for data in result %}
+        {% if data['invalid_count'] == None and (data['question'])|length > 0 %}
+            <tr>
+                <td> {{ data['question'] }} </td>
+                <td> {{ data['answer'] }} </td>
+                <td> {{ data['category']['title'].upper() }} </td>
+                <td> {{ data['value'] }} </td>
+                <td> {{ data['airdate'][:10] }} </td>
+            </tr>
+        {% endif %}
     {% endfor %}
 </table>
 {% endblock body %}

@@ -13,33 +13,33 @@ def index():
 
         if (len(json.loads(question.text)) == 0):
             question = requests.get('http://jservice.io/api/random')
-            questionData = json.loads(question.text)[0]
-            while (questionData["invalid_count"] != None):
-                question = requests.get('http://jservice.io/api/random')
-                questionData = json.loads(question.text)[0]
+            questionData = json.loads(question.text)
+            # while (questionData["invalid_count"] != None):
+            #     question = requests.get('http://jservice.io/api/random')
+            #     questionData = json.loads(question.text)
             errorMsg = "No clues match those details. Please try again. A random clue has been provided instead."
             return render_template("index.html", result = questionData, error = errorMsg)
         else:
-            questionData = json.loads(question.text)[0]
+            questionData = json.loads(question.text)
 
             print(len(json.loads(question.text)))
 
-            while (questionData["invalid_count"] != None):
-                question = requests.get('http://jservice.io/api/clues?value=100')
-                questionData = json.loads(question.text)[0]
+            # while (questionData["invalid_count"] != None):
+            #     question = requests.get('http://jservice.io/api/clues?value=100')
+            #     questionData = json.loads(question.text)
 
             return render_template("index.html", result = questionData, error = "")
     else:
         question = requests.get('http://jservice.io/api/random')
-        questionData = json.loads(question.text)[0]
+        questionData = json.loads(question.text)
 
         # http://jservice.io/api/categories?offset=18400&count=100 is bound for categories
 
         # max_date < 2015-03-31; min_date > 1984-09-10
 
-        while (questionData["invalid_count"] != None):
-            question = requests.get('http://jservice.io/api/random')
-            questionData = json.loads(question.text)[0]
+        # while (questionData["invalid_count"] != None):
+        #     question = requests.get('http://jservice.io/api/random')
+        #     questionData = json.loads(question.text)
 
         return render_template("index.html", result = questionData, error = "") # add error = error
 
