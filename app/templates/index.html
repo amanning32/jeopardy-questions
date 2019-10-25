@@ -18,36 +18,33 @@
 {% endblock ifError %}
 
 <form name="questionform" action="/" onsubmit="return validation()" method="POST">
-
-    <label for="date">Date Range</label>
-    <div class="input-group mb-3">
-        <input type="date" class="form-control" name="min_date"/>
-        <input type="date" class="form-control" name="max_date"/>
+    <div class="row">
+        <label for="date">Date Range</label>
+        <div class="input-group mb-3">
+            <input type="date" class="form-control" name="min_date"/>
+            <input type="date" class="form-control" name="max_date"/>
+        </div>
     </div>
-
-    <label for="category">Category</label>
-    <div class="input-group mb-3">
-        <input type="text" name="category" />
-    </div>
-
-    <label>Difficulty</label>
-
-    <div class="input-group mb-3">
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" name="diff1" value="easy">
-            <label class="form-check-label" for="diff1">Easy</label>
+    <div class="row">
+        <div class="col">
+            <label for="category">Category</label>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" name="category" />
+            </div>
         </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" name="diff2" value="moderate">
-            <label class="form-check-label" for="diff2">Moderate</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" name="diff3" value="hard">
-            <label class="form-check-label" for="diff3">Hard</label>
-        </div>
-        <div class="form-check form-check-inline">
-            <input class="form-check-input" type="checkbox" name="diff4" value="veryhard">
-            <label class="form-check-label" for="diff4">Very Hard</label>
+        <div class="col">
+            <label for="value">Value</label>
+            <select class="custom-select mb-3" name="value">
+                <option selected>Select value</option>
+                <option value="100">100</option>
+                <option value="200">200</option>
+                <option value="300">300</option>
+                <option value="400">400</option>
+                <option value="500">500</option>
+                <option value="600">600</option>
+                <option value="800">800</option>
+                <option value="1000">1000</option>
+            </select>
         </div>
     </div>
 

@@ -9,7 +9,8 @@ def index():
     if request.method == "POST":
 
         question = requests.get('http://jservice.io/api/clues?min_date='
-            + request.form['min_date'] + "&max_date=" + request.form['max_date'])
+            + request.form['min_date'] + "&max_date=" + request.form['max_date']
+            + "&value=" + request.form['value'] + "&category=" + request.form['category'])
 
         if (len(json.loads(question.text)) == 0):
             question = requests.get('http://jservice.io/api/random')
