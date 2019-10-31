@@ -7,10 +7,20 @@ from app import app
 @app.route('/', methods=["GET","POST"])
 def index():
     if request.method == "POST":
+        # parse input into format for API call
+        query = 'http://jservice.io/api/clues?'
+        if (len(request.form['min_date']) == 10):
+            query = query + "min_date=" + request.form['min_date'] + "&"
+        if (len(request.form['max_date']) == 10):
+            query = query + "max_date=" + request.form['max_date'] + "&"
+        if (request.form['category'] != ""):
+            query = query + "category=" + request.form['category'] + "&"
+        if (request.form['value'] != "Select value"):
+            query = query + "value=" + request.form['value'] + "&"
 
-        question = requests.get('http://jservice.io/api/clues?min_date='
-            + request.form['min_date'] + "&max_date=" + request.form['max_date']
-            + "&value=" + request.form['value'] + "&category=" + request.form['category'])
+        query = query[:-1] # either trailing ? or trailing &
+
+        question = requests.get(query)
 
         if (len(json.loads(question.text)) == 0):
             question = requests.get('http://jservice.io/api/random')
@@ -23,14 +33,12 @@ def index():
         else:
             questionData = json.loads(question.text)
 
-            print(len(json.loads(question.text)))
-
             # while (questionData["invalid_count"] != None):
             #     question = requests.get('http://jservice.io/api/clues?value=100')
             #     questionData = json.loads(question.text)
 
             return render_template("index.html", result = questionData, error = "")
-    else:
+    else: # initial load only, since any other loading is from a POST
         question = requests.get('http://jservice.io/api/random')
         questionData = json.loads(question.text)
 
@@ -42,7 +50,7 @@ def index():
         #     question = requests.get('http://jservice.io/api/random')
         #     questionData = json.loads(question.text)
 
-        return render_template("index.html", result = questionData, error = "") # add error = error
+        return render_template("index.html", result = questionData, error = "")
 
 @app.route('/about')
 def about():
