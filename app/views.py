@@ -42,7 +42,7 @@ def index():
             questionData = json.loads(question.text)
 
             for questions in questionData:
-                if questions["invalid_count"] == None:
+                if questions["invalid_count"] == None or len(question['question']) > 0:
                     return render_template("index.html", result = questionData, error = "")
 
             question = requests.get('http://jservice.io/api/random')

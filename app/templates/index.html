@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
-{% block script %}<script type="text/javascript" src="static/js/validation.js"></script>{% endblock %} <!-- 404 error on this file for some reason -->
+{% block script %}{% endblock %} <!-- 404 error on <script type="text/javascript" src="{{ url_for('static', filename='validation.js') }}"></script> -->
 {% block body %}
 <div class="jumbotron">
   <h1>AJeopardy</h1>
@@ -73,4 +73,5 @@
         {% endif %}
     {% endfor %}
 </table>
+
 {% endblock body %}
