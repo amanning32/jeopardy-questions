@@ -7,7 +7,7 @@
   <p class="lead">Flexible service for <i>Jeopardy!</i> fans</p>
 </div>
 
-<!-- handle error -->
+<!-- display error -->
 
 {% block ifError %}
     {% if error != "" %}
@@ -17,7 +17,7 @@
     {% endif %}
 {% endblock ifError %}
 
-<form name="questionform" action="/" onsubmit="return validation()" method="POST">
+<form name="questionform" action="/" method="POST">
     <div class="row">
         <label for="date">Date Range</label>
         <div class="input-group mb-3">
@@ -48,9 +48,11 @@
         </div>
     </div>
 
-    <input type="submit" class="btn btn-primary mb-3" value="Submit">
+    <input type="submit" class="btn btn-primary mb-3" name="button" value="Submit">
+    <input type="submit" class="btn btn-primary mb-3" name="button" value="Random">
 </form>
 
+{{ pagination.links }}
 <table class="table">
     <thead>
         <tr>
@@ -61,17 +63,19 @@
             <th scope="col">Airdate</th>
         </tr>
     </thead>
-    {% for data in result %}
-        {% if data['invalid_count'] == None and (data['question'])|length > 0 %}
+    <!-- hacky solution for pagination, but it works I guess -->
+    {% for i in range(pagination.skip, 10 + pagination.skip) %}
+        {% if i < result|length and result[i]['invalid_count'] == None and (result[i]['question'])|length > 0 %}
             <tr>
-                <td> {{ data['question'] }} </td>
-                <td> {{ data['answer'] }} </td>
-                <td> {{ data['category']['title'].upper() }} </td>
-                <td> {{ data['value'] }} </td>
-                <td> {{ data['airdate'][:10] }} </td>
+                <td> {{ result[i]['question'] }} </td>
+                <td> {{ result[i]['answer'] }} </td>
+                <td> {{ result[i]['category']['title'].upper() }} </td>
+                <td> {{ result[i]['value'] }} </td>
+                <td> {{ result[i]['airdate'][:10] }} </td>
             </tr>
         {% endif %}
     {% endfor %}
 </table>
+{{ pagination.links }}
 
 {% endblock body %}

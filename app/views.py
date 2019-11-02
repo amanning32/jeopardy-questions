@@ -1,33 +1,74 @@
 from flask import render_template, request
+from flask_paginate import Pagination, get_page_parameter
 import requests
 import json
 
 from app import app
 
+questionData = None
+
 @app.route('/', methods=["GET","POST"])
 def index():
+    global questionData
+
     if request.method == "POST":
-        # parse input into format for API call
-        # note the weirdness if one of min_date and max_date are passed but not both. jService flips them? so I flip them back
-        query = 'http://jservice.io/api/clues?'
-        if (len(request.form['min_date']) == 10):
-            if (len(request.form['max_date']) == 10):
-                query = query + "min_date=" + request.form['min_date'] + "&max_date=" + request.form['max_date'] + "&"
+        # if we want to submit the form
+        if request.form['button'] == 'Submit':
+            # parse input into format for API call
+            # note the weirdness if one of min_date and max_date are passed but not both. jService flips them? so I flip them back
+            query = 'http://jservice.io/api/clues?'
+            if (len(request.form['min_date']) == 10):
+                if (len(request.form['max_date']) == 10):
+                    query = query + "min_date=" + request.form['min_date'] + "&max_date=" + request.form['max_date'] + "&"
+                else:
+                    query = query + "max_date=" + request.form['min_date'] + "&"
+            elif (len(request.form['max_date']) == 10):
+                query = query + "min_date=" + request.form['max_date'] + "&"
+            if (request.form['category'] != ""):
+                query = query + "category=" + request.form['category'] + "&"
+            if (request.form['value'] != "Select value"):
+                query = query + "value=" + request.form['value'] + "&"
+
+            query = query[:-1] # either trailing ? or trailing &
+
+            question = requests.get(query) # make API call
+
+            # parse return from API call; error when no questions presented
+            if (len(json.loads(question.text)) == 0):
+                question = requests.get('http://jservice.io/api/random')
+                questionData = json.loads(question.text)
+
+                # make sure the random question we get is valid
+                while (questionData[0]["invalid_count"] != None):
+                    question = requests.get('http://jservice.io/api/random')
+                    questionData = json.loads(question.text)
+
+                pagination = Pagination(page=1, per_page=10, total=len(questionData), record_name='questionData', bs_version=4)
+                errorMsg = "No clues match those details. Please try again. A random clue has been provided instead."
+                return render_template("index.html", result=questionData, pagination=pagination, error=errorMsg)
             else:
-                query = query + "max_date=" + request.form['min_date'] + "&"
-        elif (len(request.form['max_date']) == 10):
-            query = query + "min_date=" + request.form['max_date'] + "&"
-        if (request.form['category'] != ""):
-            query = query + "category=" + request.form['category'] + "&"
-        if (request.form['value'] != "Select value"):
-            query = query + "value=" + request.form['value'] + "&"
+                questionData = json.loads(question.text)
 
-        query = query[:-1] # either trailing ? or trailing &
+                # if we have at least one valid question, we can display them
+                for questions in questionData:
+                    if questions["invalid_count"] == None or len(question['question']) > 0:
+                        page = request.args.get(get_page_parameter(), type=int, default=1)
+                        pagination = Pagination(page=page, per_page=10, total=len(questionData), record_name='questionData', bs_version=4)
+                        return render_template("index.html", result=questionData, pagination=pagination, error="")
 
-        question = requests.get(query) # make API call
+                # if we somehow have no valid questions
+                question = requests.get('http://jservice.io/api/random')
+                questionData = json.loads(question.text)
 
-        # parse return from API call; error when no questions presented
-        if (len(json.loads(question.text)) == 0):
+                # make sure the random question we get is valid
+                while (questionData[0]["invalid_count"] != None):
+                    question = requests.get('http://jservice.io/api/random')
+                    questionData = json.loads(question.text)
+
+                pagination = Pagination(page=1, per_page=10, total=len(questionData), record_name='questionData', bs_version=4)
+                errorMsg = "No clues match those details. Please try again. A random clue has been provided instead."
+                return render_template("index.html", result=questionData, pagination=pagination, error=errorMsg)
+        elif request.form['button'] == "Random":
             question = requests.get('http://jservice.io/api/random')
             questionData = json.loads(question.text)
 
@@ -36,38 +77,28 @@ def index():
                 question = requests.get('http://jservice.io/api/random')
                 questionData = json.loads(question.text)
 
-            errorMsg = "No clues match those details. Please try again. A random clue has been provided instead."
-            return render_template("index.html", result = questionData, error = errorMsg)
+            pagination = Pagination(page=1, per_page=10, total=len(questionData), record_name='questionData', bs_version=4)
+            return render_template("index.html", result=questionData, pagination=pagination, error="")
         else:
-            questionData = json.loads(question.text)
+            print("what happened")
 
-            for questions in questionData:
-                if questions["invalid_count"] == None or len(question['question']) > 0:
-                    return render_template("index.html", result = questionData, error = "")
-
+    # GET requests
+    else:
+        if questionData == None:
             question = requests.get('http://jservice.io/api/random')
             questionData = json.loads(question.text)
 
-            # make sure the random question we get is valid
             while (questionData[0]["invalid_count"] != None):
                 question = requests.get('http://jservice.io/api/random')
                 questionData = json.loads(question.text)
-
-            errorMsg = "No clues match those details. Please try again. A random clue has been provided instead."
-            return render_template("index.html", result = questionData, error = errorMsg)
-    else: # initial load only, since any other loading is from a POST
-        question = requests.get('http://jservice.io/api/random')
-        questionData = json.loads(question.text)
 
         # http://jservice.io/api/categories?offset=18400&count=100 is bound for categories
 
         # max_date < 2015-03-31; min_date > 1984-09-10
 
-        # while (questionData["invalid_count"] != None):
-        #     question = requests.get('http://jservice.io/api/random')
-        #     questionData = json.loads(question.text)
-
-        return render_template("index.html", result = questionData, error = "")
+        page = request.args.get(get_page_parameter(), type=int, default=1)
+        pagination = Pagination(page=page, per_page=10, total=len(questionData), record_name='questionData', bs_version=4)
+        return render_template("index.html", result=questionData, pagination=pagination, error="")
 
 @app.route('/about')
 def about():
