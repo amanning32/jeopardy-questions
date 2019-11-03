@@ -14,4 +14,3 @@ Then navigate to the home directory of this repository in the terminal or comman
 
 Known bugs:
 - No way to find category IDs natively.
-- Can only display up to 100 valid questions.
