@@ -39,7 +39,7 @@ def index():
                 questionData = json.loads(question.text)
 
                 # make sure the random question we get is valid
-                while (questionData[0]["invalid_count"] != None):
+                while (questionData[0]["invalid_count"] != None or len(questionData[0]['question']) == 0):
                     question = requests.get('http://jservice.io/api/random')
                     questionData = json.loads(question.text)
 
@@ -75,7 +75,7 @@ def index():
                 questionData = json.loads(question.text)
 
                 # make sure the random question we get is valid
-                while (questionData[0]["invalid_count"] != None):
+                while (questionData[0]["invalid_count"] != None or len(questionData[0]['question']) == 0):
                     question = requests.get('http://jservice.io/api/random')
                     questionData = json.loads(question.text)
 
@@ -87,7 +87,7 @@ def index():
             questionData = json.loads(question.text)
 
             # make sure the random question we get is valid
-            while (questionData[0]["invalid_count"] != None):
+            while (questionData[0]["invalid_count"] != None or len(questionData[0]['question']) == 0):
                 question = requests.get('http://jservice.io/api/random')
                 questionData = json.loads(question.text)
 
@@ -102,7 +102,7 @@ def index():
             question = requests.get('http://jservice.io/api/random')
             questionData = json.loads(question.text)
 
-            while (questionData[0]["invalid_count"] != None):
+            while (questionData[0]["invalid_count"] != None or len(questionData[0]['question']) == 0):
                 question = requests.get('http://jservice.io/api/random')
                 questionData = json.loads(question.text)
 
