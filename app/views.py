@@ -49,6 +49,20 @@ def index():
             else:
                 questionData = json.loads(question.text)
 
+                offset = 100
+
+                query2 = query + "?offset=" + str(offset) if (len(query) == 28) else query + "&offset=" + str(offset)
+                question = requests.get(query2)
+
+                while (offset < 500 and len(json.loads(question.text)) > 0):
+                    # print((json.loads(question.text)))
+                    questionData = questionData + json.loads(question.text)
+                    offset = offset + 100
+
+                    query2 = query + "?offset=" + str(offset) if (len(query) == 28) else query + "&offset=" + str(offset)
+                    question = requests.get(query2)
+
+
                 # if we have at least one valid question, we can display them
                 for questions in questionData:
                     if questions["invalid_count"] == None or len(question['question']) > 0:
