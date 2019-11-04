@@ -46,17 +46,19 @@ def index():
                 pagination = Pagination(page=1, per_page=10, total=len(questionData), record_name='questionData', bs_version=4)
                 errorMsg = "No clues match those details. Please try again. A random clue has been provided instead."
                 return render_template("index.html", result=questionData, pagination=pagination, error=errorMsg)
+            # we get questions back
             else:
                 questionData = json.loads(question.text)
 
                 offset = 100
 
+                # query parsing to ensure proper command
                 query2 = query + "?offset=" + str(offset) if (len(query) == 28) else query + "&offset=" + str(offset)
                 question = requests.get(query2)
 
+                # get up to 500 questions, if they exist
                 while (offset < 500 and len(json.loads(question.text)) > 0):
-                    # print((json.loads(question.text)))
-                    questionData = questionData + json.loads(question.text)
+                    questionData = questionData + json.loads(question.text) # I think this is the cause of the slow loading, but I'm not 100% sure
                     offset = offset + 100
 
                     query2 = query + "?offset=" + str(offset) if (len(query) == 28) else query + "&offset=" + str(offset)
@@ -82,6 +84,7 @@ def index():
                 pagination = Pagination(page=1, per_page=10, total=len(questionData), record_name='questionData', bs_version=4)
                 errorMsg = "No clues match those details. Please try again. A random clue has been provided instead."
                 return render_template("index.html", result=questionData, pagination=pagination, error=errorMsg)
+        # if they clicked the random button instead
         elif request.form['button'] == "Random":
             question = requests.get('http://jservice.io/api/random')
             questionData = json.loads(question.text)
@@ -94,10 +97,11 @@ def index():
             pagination = Pagination(page=1, per_page=10, total=len(questionData), record_name='questionData', bs_version=4)
             return render_template("index.html", result=questionData, pagination=pagination, error="")
         else:
-            print("what happened")
+            print("This should never occur.") # this should never occur
 
     # GET requests
     else:
+        # on first load, when we have no question data
         if questionData == None:
             question = requests.get('http://jservice.io/api/random')
             questionData = json.loads(question.text)
@@ -106,14 +110,7 @@ def index():
                 question = requests.get('http://jservice.io/api/random')
                 questionData = json.loads(question.text)
 
-        # http://jservice.io/api/categories?offset=18400&count=100 is bound for categories
-
-        # max_date < 2015-03-31; min_date > 1984-09-10
-
+        # display either recently received data or the data we already had, doesn't matter
         page = request.args.get(get_page_parameter(), type=int, default=1)
         pagination = Pagination(page=page, per_page=10, total=len(questionData), record_name='questionData', bs_version=4)
         return render_template("index.html", result=questionData, pagination=pagination, error="")
-
-@app.route('/about')
-def about():
-    return render_template("about.html")
