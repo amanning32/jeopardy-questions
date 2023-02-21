@@ -4,7 +4,7 @@ This Flask website interfaces with the jService API to display *Jeopardy!* quest
 
 **NOTE: This is a work of progress which is constantly being updated. There are incomplete features and features yet-to-be-implemented.**
 
-The master branch of this repository is automatically hosted at `https://ajeopardy.herokuapp.com/`.
+The master branch of this repository was formerly hosted at `https://ajeopardy.herokuapp.com/`.
 
 If you would like to set up the build locally, follow these instructions:
 
